@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Mustang Robotics - Installer</title>
-    <!-- Loads your local script directly from your folder -->
+    <!-- Loads your custom local script wrapper -->
     <script type="module" src="./installer.js"></script>
     <style>
         body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; padding: 50px; text-align: center; }
@@ -21,12 +21,10 @@
         <p>Connect your microcontroller via USB and click the installer button below to flash the core program.</p>
         
         <div class="button-container">
-            <!-- Points cleanly to the local configuration file -->
-            <!--<esp-web-install-button manifest="./manifest.json"></esp-web-install-button> -->
-            <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+            <!-- This triggers your custom installer.js custom element -->
+            <esp-web-install-button manifest="./manifest.json"></esp-web-install-button>
         </div>
     </div>
-
     <script>
         // Reads your browser path name to dynamically calculate the project title string
         const pathParts = window.location.pathname.split('/').filter(p => p !== "");
