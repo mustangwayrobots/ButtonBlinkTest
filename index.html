@@ -4,19 +4,22 @@
     <meta charset="UTF-8">
     <title>Robotics Firmware Installer</title>
     
-    <!-- Google Fonts: Orbitron for tech styling -->
+    <!-- Google Fonts: Orbitron -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@1,400;1,700;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@1,400..900&display=swap" rel="stylesheet">
 
     <!-- Load official ESP Web Tools script -->
     <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
     
     <style>
-        /* Base page styling using Orbitron Italic */
-        body {
-            font-family: 'Orbitron', system-ui, sans-serif;
+        /* Apply Orbitron to all standard elements */
+        * {
+            font-family: 'Orbitron', sans-serif !important;
             font-style: italic;
+        }
+
+        body {
             background-color: #0f172a;
             color: #f8fafc;
             margin: 0;
@@ -40,7 +43,6 @@
             text-decoration: none;
             font-size: 13px;
             font-weight: 700;
-            font-style: italic;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -69,11 +71,8 @@
             margin-bottom: 10px;
         }
 
-        /* Bold Italic Header */
         h1 {
-            font-family: 'Orbitron', system-ui, sans-serif;
             font-weight: 900;
-            font-style: italic;
             color: #38bdf8;
             font-size: 24px;
             margin: 10px 0 15px 0;
@@ -84,7 +83,6 @@
         p {
             color: #94a3b8;
             font-size: 13px;
-            font-style: italic;
             line-height: 1.6;
             margin-bottom: 25px;
             letter-spacing: 0.5px;
@@ -96,7 +94,6 @@
             padding: 10px 14px;
             border-radius: 8px;
             font-size: 12px;
-            font-style: italic;
             color: #cbd5e1;
             margin-bottom: 25px;
             display: inline-flex;
@@ -123,11 +120,17 @@
             justify-content: center;
             margin-top: 10px;
         }
+
+        /* Forces ESP Web Tools button element to inherit Orbitron styling */
+        esp-web-install-button {
+            --esp-tools-button-font-family: 'Orbitron', sans-serif;
+            font-family: 'Orbitron', sans-serif !important;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Back to Hub Navigation -->
     <div class="top-nav">
         <a href="../" class="back-link">← BACK TO PROJECT HUB</a>
     </div>
@@ -137,7 +140,6 @@
         <h1 id="project-title">LOADING PROJECT...</h1>
         <p>Connect your ESP32-C3 microcontroller via USB and click below to flash the firmware directly from your browser.</p>
         
-        <!-- Live Hardware Status Badge -->
         <div id="device-status" class="status-badge">
             <span id="status-dot" class="status-dot"></span><span id="status-text">NO HARDWARE DETECTED</span>
         </div>
@@ -148,7 +150,7 @@
     </div>
 
     <script>
-        // Automatically extract repository name for title
+        // Extract repo name for heading
         try {
             const pathParts = window.location.pathname.split('/').filter(Boolean);
             if (pathParts.length > 0) {
@@ -162,28 +164,19 @@
             document.getElementById('project-title').innerText = "ROBOTICS FIRMWARE";
         }
 
-        // Live Hardware Diagnostics via Web Serial API
+        // Web Serial API hardware listener
         async function checkSerialSupport() {
-            if (!navigator.serial) {
-                return;
-            }
+            if (!navigator.serial) return;
 
             try {
                 const ports = await navigator.serial.getPorts();
-                if (ports.length > 0) {
-                    updateConnectionState(true);
-                }
+                if (ports.length > 0) updateConnectionState(true);
             } catch (err) {
                 console.error(err);
             }
 
-            navigator.serial.addEventListener('connect', () => {
-                updateConnectionState(true);
-            });
-
-            navigator.serial.addEventListener('disconnect', () => {
-                updateConnectionState(false);
-            });
+            navigator.serial.addEventListener('connect', () => updateConnectionState(true));
+            navigator.serial.addEventListener('disconnect', () => updateConnectionState(false));
         }
 
         function updateConnectionState(isConnected) {
@@ -199,8 +192,27 @@
             }
         }
 
+        // Penetrate Shadow DOM of ESP Web Tools button to apply Orbitron inside the Web Component
+        function styleCustomButton() {
+            const installBtn = document.querySelector('esp-web-install-button');
+            if (installBtn && installBtn.shadowRoot) {
+                const style = document.createElement('style');
+                style.textContent = `
+                    button, slot, ::slotted(*) {
+                        font-family: 'Orbitron', sans-serif !important;
+                        font-style: italic !important;
+                        font-weight: 700 !important;
+                        letter-spacing: 1px !important;
+                    }
+                `;
+                installBtn.shadowRoot.appendChild(style);
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             checkSerialSupport();
+            // Wait brief moment for Web Component shadow root initialization
+            setTimeout(styleCustomButton, 300);
         });
     </script>
 </body>
