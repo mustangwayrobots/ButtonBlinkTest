@@ -34,7 +34,7 @@ jobs:
 
       - name: Prepare Files for Web Flasher
         run: |
-          find ./build -name "*.ino.merged.bin" -exec cp {} ./firmware.bin \;
+          cp build/**/*.bin ./firmware.bin || cp build/*.bin ./firmware.bin
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
