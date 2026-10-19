@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mustang Robotics - Installer</title>
+    <!-- Loads your local script directly from your folder -->
+    <script type="module" src="./installer.js"></script>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; padding: 50px; text-align: center; }
+        .installer-card { background: #1e293b; max-width: 500px; margin: 40px auto; padding: 40px; border-radius: 16px; border: 1px solid #334155; }
+        h1 { color: #38bdf8; margin-top: 0; text-transform: uppercase; }
+        p { color: #94a3b8; line-height: 1.6; }
+        .button-container { display: flex; justify-content: center; margin-top: 30px; min-height: 50px; }
+    </style>
+</head>
+<body>
+
+    <div class="installer-card">
+        <!-- Automatically figures out the exact repository folder title -->
+        <h1 id="project-title">🤖 LOADING...</h1>
+        <p>Connect your microcontroller via USB and click the installer button below to flash the core program.</p>
+        
+        <div class="button-container">
+            <!-- Points cleanly to the local configuration file -->
+            <esp-web-install-button manifest="./manifest.json"></esp-web-install-button>
+        </div>
+    </div>
+
+    <script>
+        // Reads your browser path name to dynamically calculate the project title string
+        const pathParts = window.location.pathname.split('/').filter(p => p !== "");
+        if (pathParts.length > 0) {
+            const repoName = pathParts[pathParts.length - 1];
+            document.getElementById('project-title').innerText = "🤖 " + repoName.replace(/_/g, ' ').replace(/-/g, ' ');
+        }
+    </script>
+</body>
+</html>
