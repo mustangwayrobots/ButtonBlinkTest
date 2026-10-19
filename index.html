@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Robotics Firmware Installer</title>
     
-    <!-- Google Fonts: Load bold standard Orbitron weights -->
+    <!-- Google Fonts: Orbitron -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
@@ -13,14 +13,14 @@
     <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
     
     <style>
-        /* Force standard Orbitron globally */
+        /* Global font base */
         * {
             font-family: 'Orbitron', sans-serif !important;
             font-style: normal !important;
         }
 
         body {
-            background-color: #050b14; /* Deeper, high-contrast dark space background */
+            background-color: #050b14;
             color: #ffffff;
             margin: 0;
             padding: 30px 20px;
@@ -61,7 +61,7 @@
             padding: 40px 35px;
             border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            border: 2px solid #1e293b; /* Stronger border contrast */
+            border: 2px solid #1e293b;
             text-align: center;
             box-sizing: border-box;
         }
@@ -71,18 +71,20 @@
             margin-bottom: 10px;
         }
 
+        /* Explicit, heavy Orbitron styling for the repository title */
         h1 {
-            font-weight: 900;
-            color: #ffffff; /* Pure high-contrast white */
+            font-family: 'Orbitron', sans-serif !important;
+            font-weight: 900 !important;
+            color: #38bdf8;
             font-size: 26px;
             margin: 10px 0 15px 0;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 2.5px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
         }
 
         p {
-            color: #e2e8f0; /* Bright crisp silver for maximum readability */
+            color: #cbd5e1;
             font-size: 14px;
             font-weight: 500;
             line-height: 1.6;
@@ -127,7 +129,6 @@
 </head>
 <body>
 
-    <!-- Clean single back link -->
     <div class="top-nav">
         <a href="/flash/" class="back-link">← BACK TO PROJECT HUB</a>
     </div>
@@ -189,26 +190,32 @@
             }
         }
 
-        // Force standard Orbitron inside the ESP Web Tools shadow DOM button
-        function styleCustomButton() {
+        // Aggressive shadow DOM injector for the ESP Web Tools button
+        const forceButtonFont = () => {
             const installBtn = document.querySelector('esp-web-install-button');
             if (installBtn && installBtn.shadowRoot) {
-                const style = document.createElement('style');
-                style.textContent = `
-                    button, slot, ::slotted(*) {
-                        font-family: 'Orbitron', sans-serif !important;
-                        font-style: normal !important;
-                        font-weight: 700 !important;
-                        letter-spacing: 1px !important;
-                    }
-                `;
-                installBtn.shadowRoot.appendChild(style);
+                const shadow = installBtn.shadowRoot;
+                if (!shadow.querySelector('#orbitron-override')) {
+                    const style = document.createElement('style');
+                    style.id = 'orbitron-override';
+                    style.textContent = `
+                        button, slot, span, div, ::slotted(*) {
+                            font-family: 'Orbitron', sans-serif !important;
+                            font-weight: 700 !important;
+                            letter-spacing: 1px !important;
+                        }
+                    `;
+                    shadow.appendChild(style);
+                }
             }
-        }
+        };
+
+        // Run repeatedly until the shadow root is caught and styled
+        const fontInterval = setInterval(forceButtonFont, 50);
+        setTimeout(() => clearInterval(fontInterval), 5000); // Clear after 5 seconds
 
         window.addEventListener('DOMContentLoaded', () => {
             checkSerialSupport();
-            setTimeout(styleCustomButton, 300);
         });
     </script>
 </body>
