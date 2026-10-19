@@ -1,5 +1,5 @@
 {
-  "name": "Mustang Web Firmware Installer",
+  "name": "Web Firmware Installer",
   "builds": [
     {
       "chipFamily": "ESP32-C3",
