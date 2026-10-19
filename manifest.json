@@ -1,12 +1,11 @@
 {
-  "name": "Web Firmware Installer",
+  "name": "Mustang Web Firmware Installer",
   "builds": [
     {
       "chipFamily": "ESP32-C3",
       "parts": [
-        { "path": "./build/esp32.esp32.makergo_c3_supermini/ButtonBlinkTest.ino.merged.bin", "offset": 0 }
+        { "path": "./firmware.bin", "offset": 0 }
       ]
     }
   ]
 }
-
