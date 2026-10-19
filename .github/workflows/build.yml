@@ -34,7 +34,7 @@ jobs:
 
       - name: Prepare Files for Web Flasher
         run: |
-          cp build/**/*.bin ./firmware.bin || cp build/*.bin ./firmware.bin
+          cp ./build/**/*.bin ./firmware.bin || true
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
