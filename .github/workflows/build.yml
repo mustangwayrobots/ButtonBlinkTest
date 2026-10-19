@@ -25,8 +25,8 @@ jobs:
 
       - name: Pull Central Custom Libraries
         run: |
-          mkdir -p /home/runner/Arduino
-          git clone https://github.com/mustangwayrobots/arduino-libraries.git /home/runner/Arduino/libraries
+          # Clones your private central libraries directly into the Arduino libraries path using the secure token
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/mustangwayrobots/arduino-libraries.git /home/runner/Arduino/libraries
 
       - name: Compile Sketch
         run: |
@@ -34,8 +34,7 @@ jobs:
 
       - name: Prepare Files for Web Flasher
         run: |
-          find ./build -name "*.bin" -type f -exec cp {} ./firmware.bin \;
-          ls -la ./firmware.bin
+          cp ./build/*.ino.merged.bin ./firmware.bin
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
