@@ -1,4 +1,4 @@
-// Define pin numbers
+//  Define pin numbers
 const int LED_PIN = 8;
 const int BUTTON_PIN = 6;
 
