@@ -12,8 +12,10 @@
     <!-- Load official ESP Web Tools script -->
     <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
     
+    <!-- Load Marked.js for rendering README.md -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
-        /* Global font base */
         * {
             font-family: 'Orbitron', sans-serif !important;
             font-style: normal !important;
@@ -32,7 +34,7 @@
 
         .top-nav {
             width: 100%;
-            max-width: 520px;
+            max-width: 650px;
             display: flex;
             justify-content: flex-start;
             margin-bottom: 20px;
@@ -54,16 +56,20 @@
             opacity: 0.8;
         }
 
-        .installer-card {
+        .card {
             background-color: #0f172a;
             width: 100%;
-            max-width: 520px;
+            max-width: 650px;
             padding: 40px 35px;
             border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
             border: 2px solid #1e293b;
-            text-align: center;
             box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        .installer-card {
+            text-align: center;
         }
 
         .logo {
@@ -71,7 +77,6 @@
             margin-bottom: 10px;
         }
 
-        /* Explicit, heavy Orbitron styling for the repository title */
         h1 {
             font-family: 'Orbitron', sans-serif !important;
             font-weight: 900 !important;
@@ -125,6 +130,74 @@
             justify-content: center;
             margin-top: 10px;
         }
+
+        /* README Content Styling */
+        .docs-card h3 {
+            color: #38bdf8;
+            margin-top: 0;
+            font-size: 15px;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        #readme-content {
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.7;
+            font-family: Arial, sans-serif !important; /* Standard font for readable docs */
+        }
+
+        #readme-content h1, #readme-content h2, #readme-content h3 {
+            font-family: 'Orbitron', sans-serif !important;
+            color: #38bdf8;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        #readme-content code {
+            background-color: #1e293b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace !important;
+            color: #38bdf8;
+        }
+
+        #readme-content pre {
+            background-color: #050b14;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid #1e293b;
+        }
+
+        #readme-content pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        #readme-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        #readme-content th, #readme-content td {
+            border: 1px solid #1e293b;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        #readme-content th {
+            background-color: #1e293b;
+            color: #38bdf8;
+        }
+
+        #readme-content a {
+            color: #38bdf8;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -133,7 +206,8 @@
         <a href="/flash/" class="back-link">← BACK TO PROJECT HUB</a>
     </div>
 
-    <div class="installer-card">
+    <!-- Installer Card -->
+    <div class="card installer-card">
         <div class="logo">🤖</div>
         <h1 id="project-title">LOADING PROJECT...</h1>
         <p>Connect your ESP32-C3 microcontroller via USB and click below to flash the firmware directly from your browser.</p>
@@ -147,16 +221,38 @@
         </div>
     </div>
 
+    <!-- Project Documentation Card (Auto-loaded README) -->
+    <div class="card docs-card">
+        <h3>PROJECT INSTRUCTIONS & README</h3>
+        <div id="readme-content">Loading instructions from repository...</div>
+    </div>
+
     <script>
-        // Extract repo name for heading dynamically from the URL path
+        // Extract repo name and dynamically fetch the project's README.md from GitHub raw content
         try {
             const pathParts = window.location.pathname.split('/').filter(Boolean);
             if (pathParts.length > 0) {
                 let repoName = pathParts[pathParts.length - 1];
-                repoName = repoName.replace(/[_]/g, ' ').replace(/[-]/g, ' ');
-                document.getElementById('project-title').innerText = repoName;
+                let formattedName = repoName.replace(/[_]/g, ' ').replace(/[-]/g, ' ');
+                document.getElementById('project-title').innerText = formattedName;
+                
+                // Fetch README.md directly from GitHub raw URL for this repo
+                const readmeUrl = `https://raw.githubusercontent.com/mustangwayrobots/${repoName}/main/README.md`;
+                
+                fetch(readmeUrl)
+                    .then(response => {
+                        if (!response.ok) throw new Error('README not found');
+                        return response.text();
+                    })
+                    .then(markdownText => {
+                        document.getElementById('readme-content').innerHTML = marked.parse(markdownText);
+                    })
+                    .catch(err => {
+                        document.getElementById('readme-content').innerHTML = "<p>Refer to the project repository for full setup instructions.</p>";
+                    });
             } else {
                 document.getElementById('project-title').innerText = "ROBOTICS FIRMWARE";
+                document.getElementById('readme-content').innerHTML = "";
             }
         } catch (e) {
             document.getElementById('project-title').innerText = "ROBOTICS FIRMWARE";
@@ -210,7 +306,6 @@
             }
         };
 
-        // Run repeatedly until the shadow root is caught and styled
         const fontInterval = setInterval(forceButtonFont, 50);
         setTimeout(() => clearInterval(fontInterval), 5000);
 
